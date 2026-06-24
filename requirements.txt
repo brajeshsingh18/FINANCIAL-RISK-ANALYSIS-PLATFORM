@@ -1,0 +1,42 @@
+# Data Collection
+yfinance
+requests
+
+# Data Processing
+pandas
+numpy
+
+# Visualization & Analysis
+matplotlib
+seaborn
+
+# Technical Indicators
+ta
+
+# Machine Learning
+scikit-learn
+xgboost
+
+# Deep Learning (for future LSTM/TFT)
+torch
+
+# NLP & FinBERT
+transformers
+tokenizers
+accelerate
+
+# Model Saving
+joblib
+
+# Environment Variables
+python-dotenv
+
+# Progress Bars
+tqdm
+
+# Utilities
+scipy
+
+# Optional Notebook Support
+jupyter
+ipykernel

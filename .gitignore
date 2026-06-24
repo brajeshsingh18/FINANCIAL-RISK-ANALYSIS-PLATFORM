@@ -1,0 +1,70 @@
+# Virtual environments
+myvenv/
+venv/
+env/
+.env
+
+# Environment variables
+.env
+.env.local
+*.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Data files (raw downloads are large and regenerable)
+data/stocks/*.csv
+data/stocks/*.json
+data/news/*.csv
+data/news/*.json
+data/news/*.txt
+data/processed/*.csv
+data/processed/*.parquet
+
+# Trained models (large binary files)
+models/*.pkl
+models/*.joblib
+models/*.pt
+models/*.pth
+models/*.h5
+models/*.onnx
+
+# Reports and outputs
+reports/*.png
+reports/*.jpg
+reports/*.jpeg
+reports/*.pdf
+reports/*.html
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# API keys / secrets
+secrets.yaml
+credentials.json
+config.local.yaml
