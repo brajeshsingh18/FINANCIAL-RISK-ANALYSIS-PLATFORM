@@ -21,14 +21,18 @@ dist/
 *.egg-info/
 *.egg
 
+data/
 # Data files (raw downloads are large and regenerable)
-data/stocks/*.csv
-data/stocks/*.json
-data/news/*.csv
-data/news/*.json
-data/news/*.txt
+data/raw/stocks/*.csv
+data/raw/stocks/*.json
+data/raw/news/*.csv
+data/raw/news/*.json
+data/raw/macro/*.csv
+data/raw/news/*.txt
 data/processed/*.csv
 data/processed/*.parquet
+
+
 
 # Trained models (large binary files)
 models/*.pkl
