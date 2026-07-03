@@ -21,16 +21,18 @@ dist/
 *.egg-info/
 *.egg
 
-data/
+
 # Data files (raw downloads are large and regenerable)
-data/raw/stocks/*.csv
-data/raw/stocks/*.json
-data/raw/news/*.csv
-data/raw/news/*.json
-data/raw/macro/*.csv
-data/raw/news/*.txt
-data/processed/*.csv
-data/processed/*.parquet
+# data/raw/stocks/*.csv
+# data/raw/stocks/*.json
+# data/raw/news/*.csv
+# data/raw/news/*.json
+# data/raw/macro/*.csv
+# data/raw/news/*.txt
+# data/processed/*.csv
+# data/processed/*.parquet
+data/raw/
+data/processed/
 
 
 
