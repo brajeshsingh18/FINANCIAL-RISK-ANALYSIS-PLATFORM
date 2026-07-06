@@ -133,51 +133,18 @@ TICKERS = [
 
 START_DATE = "2018-01-01"
 END_DATE = None  # Downloads until today
-
 RAW_DATA_DIR = Path("data/raw/stocks")
-
-# ---------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(message)s",
 )
-
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------
-# Functions
-# ---------------------------------------------------------------------
-
-
 def create_directory() -> None:
-    """
-    Create the output directory if it doesn't exist.
-    """
     RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def download_stock_data(ticker: str) -> pd.DataFrame:
-    """
-    Download historical stock data for a ticker.
-
-    Parameters
-    ----------
-    ticker : str
-        Stock ticker symbol.
-
-    Returns
-    -------
-    pd.DataFrame
-        Historical stock price data.
-
-    Raises
-    ------
-    ValueError
-        If no data is returned.
-    """
     df = yf.download(
         ticker,
         start=START_DATE,
@@ -185,42 +152,26 @@ def download_stock_data(ticker: str) -> pd.DataFrame:
         progress=False,
         auto_adjust=False,
     )
-
     if df.empty:
         raise ValueError(f"No data returned for {ticker}")
-
     df.reset_index(inplace=True)
-
     return df
 
 
 def save_stock_data(df: pd.DataFrame, ticker: str) -> None:
-    """
-    Save stock data to CSV.
-    """
     output_path = RAW_DATA_DIR / f"{ticker}.csv"
     df.to_csv(output_path, index=False)
 
 
 def download_all_stocks(tickers: List[str]) -> None:
-    """
-    Download data for multiple tickers.
-    """
     success = 0
-
     for ticker in tqdm(tickers, desc="Downloading Stocks"):
-
         try:
             logger.info("Downloading %s...", ticker)
-
             df = download_stock_data(ticker)
-
             save_stock_data(df, ticker)
-
             logger.info("Saved %s.csv (%d rows)", ticker, len(df))
-
             success += 1
-
         except Exception as e:
             logger.error("Failed to download %s : %s", ticker, e)
 
@@ -230,14 +181,9 @@ def download_all_stocks(tickers: List[str]) -> None:
         len(tickers),
     )
 
-
 def main() -> None:
-    """
-    Entry point.
-    """
     create_directory()
     download_all_stocks(TICKERS)
-
 
 if __name__ == "__main__":
     main()

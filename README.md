@@ -149,4 +149,4 @@ This project is for educational and research purposes.
 
 ## ✍️ Author
 
-B.Tech Python Project — Financial Risk Platform
+B.Tech Python Project — Financial Risk Analysis Platform
