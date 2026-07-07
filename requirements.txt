@@ -12,6 +12,7 @@ seaborn
 
 # Technical Indicators
 ta
+pandas-ta
 
 # Machine Learning
 scikit-learn
@@ -42,3 +43,4 @@ jupyter
 ipykernel
 
 fredapi
+nltk
