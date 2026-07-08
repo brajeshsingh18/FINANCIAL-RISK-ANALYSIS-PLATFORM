@@ -33,6 +33,7 @@ dist/
 # data/processed/*.parquet
 data/raw/
 data/processed/
+data/*.parquet
 
 
 
