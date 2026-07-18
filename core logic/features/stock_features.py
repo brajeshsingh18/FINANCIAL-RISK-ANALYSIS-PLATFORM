@@ -30,6 +30,10 @@ def price_features(df):
         np.log(df["Close"] / df["Prev_Close"]),
         np.nan,
     )
+    df["Return_5D"] = g["Close"].pct_change(5)
+    df["Return_10D"] = g["Close"].pct_change(10)
+    df["Return_20D"] = g["Close"].pct_change(20)
+    df["Return_60D"] = g["Close"].pct_change(60)
     df["Gap"] = df["Open"] - df["Prev_Close"]
     df["Open_Close_Diff"] = df["Close"] - df["Open"]
     df["High_Low_Spread"] = df["High"] - df["Low"]
@@ -46,15 +50,45 @@ def indicator_features(df):
     df["EMA_26"] = g_close.transform(lambda x: ta.ema(x, length=26))
     df["RSI_14"] = g_close.transform(lambda x: ta.rsi(x, length=14))
     df["ROC_10"] = g_close.transform(lambda x: ta.roc(x, length=10))
+    g = df.groupby(level="Ticker")
+    df["Dist_SMA5"] = (df["Close"] - df["SMA_5"]) / df["SMA_5"]
+    df["Dist_SMA20"] = (df["Close"] - df["SMA_20"]) / df["SMA_20"]
+    df["Dist_SMA50"] = (df["Close"] - df["SMA_50"]) / df["SMA_50"]
+
+    df["Dist_EMA12"] = (df["Close"] - df["EMA_12"]) / df["EMA_12"]
+    df["Dist_EMA26"] = (df["Close"] - df["EMA_26"]) / df["EMA_26"]
+    df["EMA_DIFF"] = df["EMA_12"] - df["EMA_26"]
+    df["EMA_RATIO"] = df["EMA_12"] / df["EMA_26"]
+    df["Rolling_STD_5"] = (
+        g["Daily_Return"].transform(lambda x: x.rolling(5).std()))
+    df["Rolling_STD_10"] = (
+        g["Daily_Return"].transform(lambda x: x.rolling(10).std()))
     df["Rolling_STD_20"] = (
-        df.groupby(level="Ticker")["Daily_Return"]
-        .transform(lambda x: x.rolling(20).std())
-    )
+        g["Daily_Return"].transform(lambda x: x.rolling(20).std()))
+    df["Rolling_STD_60"] = (
+        g["Daily_Return"].transform(lambda x: x.rolling(60).std()))
+    df["EWMA_VOL_20"] = (g["Daily_Return"].transform(lambda x: x.ewm(span=20).std()))
     df["Volume_SMA20"] = (
         df.groupby(level="Ticker")["Volume"]
         .transform(lambda x: x.rolling(20).mean())
     )
     df["Relative_Volume"] = df["Volume"] / df["Volume_SMA20"]
+    df["Rolling_Sharpe_20"] = (g["Daily_Return"].transform(lambda x: x.rolling(20).mean() / x.rolling(20).std()))
+    df["Return_5D"] = g["Close"].pct_change(5)
+    df["Return_10D"] = g["Close"].pct_change(10)
+    df["Return_20D"] = g["Close"].pct_change(20)
+    df["Return_60D"] = g["Close"].pct_change(60)
+    rolling_high = g["High"].transform(lambda x: x.rolling(20).max())
+    rolling_low = g["Low"].transform(lambda x: x.rolling(20).min())
+
+    df["Price_Position_20"] = ((df["Close"] - rolling_low)/ (rolling_high - rolling_low))
+    volume_mean = g["Volume"].transform(lambda x: x.rolling(20).mean())
+    volume_std = g["Volume"].transform(lambda x: x.rolling(20).std())
+
+    df["Volume_ZScore"] = ((df["Volume"] - volume_mean)/ volume_std)
+    df["RSI_Above70"] = (df["RSI_14"] > 70).astype(int)
+    df["RSI_Below30"] = (df["RSI_14"] < 30).astype(int)
+
     return df
 
 
@@ -89,11 +123,26 @@ def add_atr_obv(df):
     return pd.concat(pieces).sort_index()
 
 
+def add_adx(group):
+    group = group.copy()
+    adx = ta.adx(group["High"],group["Low"],group["Close"],length=14)
+    group["ADX_14"] = adx["ADX_14"].values
+    return group
+
+
+def add_drawdown(group):
+    group = group.copy()
+    rolling_max = group["Close"].cummax()
+    group["Drawdown"] = (group["Close"] - rolling_max) / rolling_max
+    return group
+
 def build_features(df):
     df = price_features(df)
     df = indicator_features(df)
     df = df.groupby(level="Ticker", group_keys=False).apply(add_macd)
     df = df.groupby(level="Ticker", group_keys=False).apply(add_bbands)
+    df = df.groupby(level="Ticker",group_keys=False).apply(add_adx)
+    df = df.groupby(level="Ticker",group_keys=False).apply(add_drawdown)
     df = add_atr_obv(df)
     df = df.drop(columns=["Prev_Close"])
     df = df.dropna(subset=WARMUP_COLUMNS)
