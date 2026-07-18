@@ -54,7 +54,7 @@ news_features["News_Count_7D"] = (g["News_Count"].transform(lambda x: x.rolling(
 news_features["News_Count_14D"] = (g["News_Count"].transform(lambda x: x.rolling(14, min_periods=1).sum()))
 
 news_features["Sentiment_Change"] = (g["Avg_Sentiment"].diff())
-news_features["Sentiment_Pct_Change"] = (g["Avg_Sentiment"].pct_change())
+news_features["Sentiment_Pct_Change"] = (g["Avg_Sentiment"].pct_change(fill_method=None).replace([np.inf, -np.inf], np.nan))
 
 news_features["Sentiment_STD_7D"] = (g["Avg_Sentiment"].transform(lambda x: x.rolling(7, min_periods=1).std()))
 news_features["Sentiment_STD_14D"] = (g["Avg_Sentiment"].transform(lambda x: x.rolling(14, min_periods=1).std()))

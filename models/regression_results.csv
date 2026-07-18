@@ -1,0 +1,6 @@
+,cv_mae,test_mae,rmse,r2,params
+Ridge,0.0017191546294642649,0.0014762261758624585,0.002713042419711452,0.9329087713695897,{'alpha': 100}
+RF,0.0014009009586567443,0.0013947046475890857,0.0026781598860313297,0.9346229111271618,"{'n_estimators': 500, 'min_samples_split': 20, 'min_samples_leaf': 8, 'max_features': 0.8, 'max_depth': 8}"
+LGBM,0.0014376288028020152,0.0014506897874941237,0.002712341863681384,0.932943415204253,"{'subsample': 0.8, 'num_leaves': 15, 'n_estimators': 500, 'min_child_samples': 30, 'max_depth': -1, 'learning_rate': 0.01, 'colsample_bytree': 1.0}"
+CatBoost,0.0015280365535923685,0.0014995591372113151,0.0027545856344826695,0.9308383838515459,"{'learning_rate': 0.03, 'l2_leaf_reg': 5, 'iterations': 300, 'depth': 4}"
+XGB,0.0014473779042719328,0.0014589898399715358,0.0027241636566338787,0.9323576065829682,"{'subsample': 1.0, 'n_estimators': 500, 'min_child_weight': 10, 'max_depth': 4, 'learning_rate': 0.01, 'colsample_bytree': 0.8}"
