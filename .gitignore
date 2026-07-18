@@ -44,6 +44,7 @@ models/*.pt
 models/*.pth
 models/*.h5
 models/*.onnx
+model/*.txt
 
 # Reports and outputs
 reports/*.png

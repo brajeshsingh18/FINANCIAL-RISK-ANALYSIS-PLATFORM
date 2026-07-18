@@ -19,3 +19,5 @@ final_df.to_parquet("data/final_dataset.parquet")
 print(df_stocks.shape,df_macro.shape,df_news.shape)
 print(final_df.shape)
 print(final_df.columns)
+
+print("Done")

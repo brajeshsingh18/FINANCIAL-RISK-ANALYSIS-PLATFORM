@@ -1,0 +1,12 @@
+                    model_data.parquet
+                           │
+            ┌──────────────┴──────────────┐
+            │                             │
+     train_classifier.py           train_regressor.py
+            │                             │
+      high_risk (0/1)        future_volatility_20
+            │                             │
+   Risk Probability               Predicted Volatility
+            └──────────────┬──────────────┘
+                           │
+                    Financial Risk Report
