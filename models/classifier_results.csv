@@ -1,0 +1,5 @@
+,cv_f1,accuracy,precision,recall,f1,auc,params
+LR,0.9538,0.9557,0.955,0.9557,0.9552,0.9802123549700527,"{'penalty': 'l2', 'class_weight': None, 'C': 0.01}"
+RF,0.9699,0.9657,0.9656,0.9657,0.9656,0.9829896768926062,"{'n_estimators': 500, 'min_samples_split': 10, 'min_samples_leaf': 2, 'max_features': 0.8, 'max_depth': 4, 'class_weight': None}"
+LGBM,0.9702,0.9663,0.9661,0.9663,0.9662,0.9851796934226313,"{'subsample': 0.8, 'num_leaves': 127, 'n_estimators': 300, 'min_child_samples': 50, 'max_depth': 4, 'learning_rate': 0.03, 'colsample_bytree': 1.0}"
+XGB,0.9701948301772596,0.9660841232227488,0.9658555269440336,0.9660841232227488,0.965944451197824,0.9851546144123745,"{'subsample': 1.0, 'n_estimators': 500, 'min_child_weight': 10, 'max_depth': 4, 'learning_rate': 0.01, 'colsample_bytree': 0.8}"
