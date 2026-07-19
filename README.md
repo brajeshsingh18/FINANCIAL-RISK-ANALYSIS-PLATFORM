@@ -35,6 +35,8 @@ FINANCIAL RISK PLATFORM/
 └── reports/                     # Generated outputs (gitignored)
 ```
 
+"CatBoost evaluation was planned but could not be completed due to a package compatibility issue in the development environment. The project compares Logistic Regression, Random Forest, LightGBM, XGBoost, and multiple regression models."
+
 ## ⚙️ Tech Stack
 
 | Category | Tools |
