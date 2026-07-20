@@ -1,0 +1,32 @@
+#overall Structure how the request will be send this module
+Client
+   │
+POST /predict
+   │
+   ▼
+FastAPI
+   │
+   ▼
+predict()
+   │
+   ├── classifier_prediction()
+   └── regression_prediction()
+   │
+   ▼
+JSON Response
+
+#another architecture how will this module work 
+
+Input company data
+        ↓
+feature engineering
+        ↓
+classification preprocessing
+        ↓
+classifier prediction
+        ↓
+regression preprocessing
+        ↓
+regression prediction
+        ↓
+Return JSON

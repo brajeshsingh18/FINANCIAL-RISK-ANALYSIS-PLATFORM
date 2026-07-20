@@ -77,7 +77,7 @@ def load_news_data()-> pd.DataFrame:
 
 def cleaning_news(df:pd.DataFrame)->pd.DataFrame:
     df["title"] = df["title"].fillna("")
-    df["description"] = df["description"].fillna("")
+    df["description"] = df["description"].fillna("")     
     df["processed_text"] = (df["title"].str.strip()+ " "+ df["description"].str.strip())
     df["processed_text"]=df["processed_text"].apply(preprocess)
     return df

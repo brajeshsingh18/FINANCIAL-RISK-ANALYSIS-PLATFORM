@@ -23,3 +23,8 @@ jupyter
 ipykernel
 fredapi
 nltk
+groq
+langchain-groq
+langgraph
+langchain
+shap

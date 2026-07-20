@@ -1,6 +1,6 @@
 # Source	                                        Purpose	                        Library/API
 # Yahoo Finance	                                Historical stock prices	            yfinance
-# NewsAPI (or Finnhub/Alpha Vantage News)	        Financial news	                requests
+# NewsAPI (or Finnhub/Alpha Vantage News)	        Financial news	                requests(marketaux)
 # FRED	                                        Macroeconomic indicators	        fredapi
 
 
@@ -17,30 +17,17 @@
 # Real Estate	5
 # Materials	7
 
-"""
-Download historical stock market data from Yahoo Finance.
-
-This module downloads daily OHLCV (Open, High, Low, Close, Volume)
-data for a list of stock tickers and stores each ticker as a CSV file
-under data/raw/stocks/.
-"""
 
 from pathlib import Path
 import logging
 from typing import List
-
 import pandas as pd
 import yfinance as yf
 from tqdm import tqdm
 
-# ---------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------
 
 TICKERS = [
-    # =========================
     # Technology (10)
-    # =========================
     "AAPL",   # Apple
     "MSFT",   # Microsoft
     "GOOGL",  # Alphabet
@@ -51,10 +38,7 @@ TICKERS = [
     "AVGO",   # Broadcom
     "ORCL",   # Oracle
     "CRM",    # Salesforce
-
-    # =========================
     # Financial Services (7)
-    # =========================
     "JPM",    # JPMorgan Chase
     "BAC",    # Bank of America
     "WFC",    # Wells Fargo
@@ -62,72 +46,45 @@ TICKERS = [
     "MS",     # Morgan Stanley
     "AXP",    # American Express
     "BLK",    # BlackRock
-
-    # =========================
     # Healthcare (6)
-    # =========================
     "JNJ",    # Johnson & Johnson
     "PFE",    # Pfizer
     "MRK",    # Merck
     "ABBV",   # AbbVie
     "LLY",    # Eli Lilly
     "UNH",    # UnitedHealth
-
-    # =========================
     # Consumer Discretionary (5)
-    # =========================
     "TSLA",   # Tesla
     "HD",     # Home Depot
     "MCD",    # McDonald's
     "NKE",    # Nike
     "SBUX",   # Starbucks
-
-    # =========================
     # Consumer Staples (4)
-    # =========================
     "WMT",    # Walmart
     "PG",     # Procter & Gamble
     "KO",     # Coca-Cola
     "PEP",    # PepsiCo
-
-    # =========================
     # Energy (3)
-    # =========================
     "XOM",    # Exxon Mobil
     "CVX",    # Chevron
     "COP",    # ConocoPhillips
-
-    # =========================
     # Industrials (4)
-    # =========================
     "CAT",    # Caterpillar
     "GE",     # GE Aerospace
     "HON",    # Honeywell
     "UPS",    # United Parcel Service
-
-    # =========================
     # Communication Services (3)
-    # =========================
     "NFLX",   # Netflix
     "DIS",    # Disney
     "TMUS",   # T-Mobile
-
-    # =========================
     # Semiconductors (3)
-    # =========================
     "QCOM",   # Qualcomm
     "MU",     # Micron
     "TXN",    # Texas Instruments
-
-    # =========================
     # Utilities (2)
-    # =========================
     "NEE",    # NextEra Energy
     "DUK",    # Duke Energy
-
-    # =========================
     # Real Estate (1)
-    # =========================
     "PLD"      # Prologis
 ]
 
@@ -144,11 +101,11 @@ def create_directory() -> None:
     RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def download_stock_data(ticker: str) -> pd.DataFrame:
+def download_stock_data(ticker: str,start_date=START_DATE,end_date:str|None=None) -> pd.DataFrame:
     df = yf.download(
         ticker,
-        start=START_DATE,
-        end=END_DATE,
+        start=start_date,
+        end=end_date,
         progress=False,
         auto_adjust=False,
     )
