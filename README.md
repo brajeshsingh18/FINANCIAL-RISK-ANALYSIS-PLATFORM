@@ -28,14 +28,14 @@ FINANCIAL RISK PLATFORM/
 │
 ├── data/                        # Data storage (gitignored)
 │   ├── stocks/                  # Raw historical price data
-│   ├── news/                    # Raw and processed news
+│  NBBN ├── news/                    # Raw and processed news
 │   └── processed/               # Engineered features
 │
 ├── models/                      # Saved trained models (gitignored)
 └── reports/                     # Generated outputs (gitignored)
 ```
 
-"CatBoost evaluation was planned but could not be completed due to a package compatibility issue in the development environment. The project compares Logistic Regression, Random Forest, LightGBM, XGBoost, and multiple regression models."
+"CatBoost evaluation was planned but could not be completed due to a package compatibility issue in the development environment. The project compares Logistic Regression, Random Forest, LightGBM, XGBoost, and multiple regression models."HY67 V GB 
 
 ## ⚙️ Tech Stack
 

@@ -1,11 +1,3 @@
-"""
-Clean and preprocess financial news data.
-
-This module reads all news CSV files from data/raw/news/,
-validates them, cleans them, merges them into a single dataframe,
-and saves the cleaned dataset.
-"""
-
 from pathlib import Path
 import pandas as pd
 from tqdm import tqdm
@@ -45,6 +37,10 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     ]
     df.sort_values("published_at",inplace=True,)
     return df
+
+def preprocess_news_data(df:pd.DataFrame,ticker:str)-> pd.DataFrame:
+    validate_columns(df,ticker)
+    return clean_dataframe(df.copy())
 
 def merge_all_files() -> pd.DataFrame:
     all_data = []

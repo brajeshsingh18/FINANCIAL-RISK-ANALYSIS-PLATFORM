@@ -1,11 +1,3 @@
-"""
-Download financial news from MarketAux.
-
-This module downloads company-specific financial news for a list of
-stock tickers and stores each ticker as a CSV file under
-data/raw/news/.
-"""
-
 from pathlib import Path
 from typing import List
 import os
@@ -13,7 +5,6 @@ import pandas as pd
 import requests
 from dotenv import load_dotenv
 from tqdm import tqdm
-
 load_dotenv()
 
 API_KEY = os.getenv("MARKETAUX_API_KEY")
@@ -29,21 +20,19 @@ TICKERS: List[str] = [
     "DIS", "TMUS", "QCOM", "MU", "TXN",
     "NEE", "DUK", "PLD"
 ]
-
 OUTPUT_DIR = Path("data/raw/news")
-
 BASE_URL = "https://api.marketaux.com/v1/news/all"
-
 def create_directory() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def fetch_news(ticker: str) -> pd.DataFrame:
+def fetch_news(ticker: str,published_after:str | None=None) -> pd.DataFrame:
     params = {
         "symbols": ticker,
         "language": "en",
         "limit": 100,
         "api_token": API_KEY,
+        "published_after":published_after
     }
 
     response = requests.get(BASE_URL, params=params, timeout=30)

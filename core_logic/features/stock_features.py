@@ -1,17 +1,13 @@
 from pathlib import Path
-
 import numpy as np
 import pandas as pd
 import pandas_ta as ta
-
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 INPUT_FILE = PROJECT_ROOT / "data" / "processed" / "stocks" / "cleaned_stock_data.csv"
 OUTPUT_DIR = PROJECT_ROOT / "data" / "feature_engineered" / "stocks"
 OUTPUT_FILE = OUTPUT_DIR / "stock_features.parquet"
-
 WARMUP_COLUMNS = ["RSI_14", "MACD", "ATR_14"]
-
 
 def load_data():
     df = pd.read_csv(INPUT_FILE)

@@ -193,54 +193,54 @@ print(y_test.value_counts(normalize=True))
 tscv = TimeSeriesSplit(n_splits=5)
 
 search_spaces = {
-    # "LR": {
-    #     "model": LogisticRegression(max_iter=2000, random_state=42),
-    #     "params": {
-    #         "C": [0.01, 0.03, 0.1, 0.3, 1, 3, 10],
-    #         "penalty": ["l2"],
-    #         "class_weight": [None, "balanced"],
-    #     },
-    #     "n_iter": 10,
-    #     "needs_scaling": True,
-    # },
-    # "RF": {
-    #     "model": RandomForestClassifier(random_state=42, n_jobs=-1),
-    #     "params": {
-    #         "n_estimators": [200, 300, 500, 800],
-    #         "max_depth": [None, 4, 6, 8, 12, 16],
-    #         "min_samples_split": [2, 5, 10, 20],
-    #         "min_samples_leaf": [1, 2, 4, 8],
-    #         "max_features": ["sqrt", "log2", 0.5, 0.8],
-    #         "class_weight": [None, "balanced", "balanced_subsample"],
-    #     },
-    #     "n_iter": 25,
-    #     "needs_scaling": False,
-    # },
-    # "LGBM": {
-    #     "model": LGBMClassifier(random_state=42, verbose=-1),
-    #     "params": {
-    #         "n_estimators": [200, 300, 500, 800],
-    #         "num_leaves": [15, 31, 63, 127],
-    #         "max_depth": [-1, 4, 6, 8],
-    #         "learning_rate": [0.01, 0.03, 0.05, 0.1],
-    #         "subsample": [0.6, 0.8, 1.0],
-    #         "colsample_bytree": [0.6, 0.8, 1.0],
-    #         "min_child_samples": [10, 20, 30, 50],
-    #     },
-    #     "n_iter": 10,
-    #     "needs_scaling": False,
-    # },
-    # "Catboost": {
-    #     "model": CatBoostClassifier(loss_function="LogLoss", random_seed=42, verbose=0),
-    #     "params": {
-    #         "iterations": [300, 500, 800],
-    #         "depth": [4, 6, 8, 10],
-    #         "learning_rate": [0.01, 0.03, 0.05, 0.1],
-    #         "l2_leaf_reg": [1, 3, 5, 7, 9],
-    #     },
-    #     "n_iter": 10,
-    #     "needs_scaling": False,
-    # },
+    "LR": {
+        "model": LogisticRegression(max_iter=2000, random_state=42),
+        "params": {
+            "C": [0.01, 0.03, 0.1, 0.3, 1, 3, 10],
+            "penalty": ["l2"],
+            "class_weight": [None, "balanced"],
+        },
+        "n_iter": 10,
+        "needs_scaling": True,
+    },
+    "RF": {
+        "model": RandomForestClassifier(random_state=42, n_jobs=-1),
+        "params": {
+            "n_estimators": [200, 300, 500, 800],
+            "max_depth": [None, 4, 6, 8, 12, 16],
+            "min_samples_split": [2, 5, 10, 20],
+            "min_samples_leaf": [1, 2, 4, 8],
+            "max_features": ["sqrt", "log2", 0.5, 0.8],
+            "class_weight": [None, "balanced", "balanced_subsample"],
+        },
+        "n_iter": 25,
+        "needs_scaling": False,
+    },
+    "LGBM": {
+        "model": LGBMClassifier(random_state=42, verbose=-1),
+        "params": {
+            "n_estimators": [200, 300, 500, 800],
+            "num_leaves": [15, 31, 63, 127],
+            "max_depth": [-1, 4, 6, 8],
+            "learning_rate": [0.01, 0.03, 0.05, 0.1],
+            "subsample": [0.6, 0.8, 1.0],
+            "colsample_bytree": [0.6, 0.8, 1.0],
+            "min_child_samples": [10, 20, 30, 50],
+        },
+        "n_iter": 10,
+        "needs_scaling": False,
+    },
+    "Catboost": {
+        "model": CatBoostClassifier(loss_function="LogLoss", random_seed=42, verbose=0),
+        "params": {
+            "iterations": [300, 500, 800],
+            "depth": [4, 6, 8, 10],
+            "learning_rate": [0.01, 0.03, 0.05, 0.1],
+            "l2_leaf_reg": [1, 3, 5, 7, 9],
+        },
+        "n_iter": 10,
+        "needs_scaling": False,
+    },
     "XGB": {
         "model": XGBClassifier(random_state=42, objective="binary:logistic", eval_metric="logloss"),
         "params": {

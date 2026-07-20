@@ -1,13 +1,4 @@
-"""
-Clean and preprocess historical stock data.
-
-This module reads all stock CSV files from data/raw/stocks/,
-validates them, cleans them, merges them into a single dataframe,
-and saves the cleaned dataset.
-"""
-
 from pathlib import Path
-
 import pandas as pd
 from tqdm import tqdm
 
@@ -29,7 +20,7 @@ def validate_columns(df: pd.DataFrame, file_name: str):
             f"{file_name} missing columns : {missing}"
         )
 
-def clean_dataframe(df: pd.DataFrame,ticker: str,) -> pd.DataFrame:
+def clean_dataframe(df: pd.DataFrame,ticker: str) -> pd.DataFrame:
     df["Date"] = pd.to_datetime(df["Date"])
     df.sort_values("Date", inplace=True)
     df.drop_duplicates(subset=["Date"],inplace=True,)
@@ -41,6 +32,10 @@ def clean_dataframe(df: pd.DataFrame,ticker: str,) -> pd.DataFrame:
     df = df[(df["Open"] > 0)& (df["High"] > 0)& (df["Low"] > 0)& (df["Close"] > 0)& (df["Volume"] >= 0)]
     df["Ticker"] = ticker
     return df
+
+def preprocess_stock_dataframe(df: pd.DataFrame,ticker: str,) -> pd.DataFrame:   # this file is purely created to reuse the preprocessing steps in my inference pipeline it is not needed in training
+    validate_columns(df, ticker)
+    return clean_dataframe(df.copy(), ticker)
 
 def merge_all_files() -> pd.DataFrame:
     all_data = []

@@ -48,8 +48,8 @@ fred = Fred(api_key=API_KEY)
 def create_directory() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-def fetch_macro_data(series_id: str) -> pd.DataFrame:
-    data = fred.get_series(series_id, observation_start=START_DATE)
+def fetch_macro_data(series_id: str,start_date=START_DATE) -> pd.DataFrame:
+    data = fred.get_series(series_id, observation_start=start_date)
     if data.empty:
         raise ValueError(f"No data found for {series_id}")
     df = data.reset_index()
