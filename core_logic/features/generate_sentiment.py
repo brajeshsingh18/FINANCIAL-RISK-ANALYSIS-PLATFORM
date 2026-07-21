@@ -1,4 +1,4 @@
-from finbert_sentiment import predict_sentiment
+from .finbert_sentiment import predict_sentiment
 import pandas as pd
 import numpy as np
 from pathlib import Path

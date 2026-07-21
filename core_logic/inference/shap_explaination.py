@@ -1,15 +1,24 @@
 import joblib
 import shap
 import pandas as pd
+from core_logic.exceptions import SHAPExplanationError
 classifier = joblib.load("models/best_classifier_final_model.pkl")
 explainer = shap.TreeExplainer(classifier)
 
 def explain_shap(latest_row:pd.DataFrame):
-    shap_values = explainer(latest_row)
-    df = pd.DataFrame({
-        "feature": latest_row.columns,
-        "shap_value": shap_values.values[0]
-    })
+    if latest_row.empty:
+        raise ValueError("Cannot generate SHAP explanation for empty dataframe.")
+    try:
+        shap_values = explainer(latest_row)
+        df = pd.DataFrame({
+            "feature": latest_row.columns,
+            "shap_value": shap_values.values[0]
+        })
+    except Exception as e:
+        raise SHAPExplanationError(
+        "Failed to generate SHAP explanation."
+        )
+    
     df["abs"] = df["shap_value"].abs()
     df = df.sort_values("abs",ascending=False)
     return df.head(10)
