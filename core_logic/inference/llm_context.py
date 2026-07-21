@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 
-
 def safe_float(x):
     try:
         if pd.isna(x):

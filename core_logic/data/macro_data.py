@@ -10,14 +10,6 @@
 # Retail Sales	                RSAFS	        Consumer spending
 # Personal Consumption Expenditure	PCE	        Consumer demand
 
-
-"""
-Download macroeconomic indicators from FRED.
-
-This module downloads important US macroeconomic indicators and stores
-each indicator as a CSV file under data/raw/macro/.
-"""
-
 from pathlib import Path
 from typing import Dict
 import os
