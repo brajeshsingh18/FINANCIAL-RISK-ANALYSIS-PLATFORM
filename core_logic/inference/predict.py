@@ -1,3 +1,21 @@
+import warnings
+import logging
+from pandas.errors import PerformanceWarning
+from sklearn.exceptions import InconsistentVersionWarning
+
+warnings.filterwarnings("ignore")
+warnings.filterwarnings("ignore", category=PerformanceWarning)
+warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
+
+logging.basicConfig(level=logging.ERROR)
+
+logging.getLogger("httpx").setLevel(logging.ERROR)
+logging.getLogger("httpcore").setLevel(logging.ERROR)
+logging.getLogger("urllib3").setLevel(logging.ERROR)
+logging.getLogger("transformers").setLevel(logging.ERROR)
+logging.getLogger("matplotlib").setLevel(logging.ERROR)
+logging.getLogger("PIL").setLevel(logging.ERROR)
+
 import pandas as pd
 from .predict_classifier import classifier_prediction
 from .predict_regressor import regression_prediction
@@ -7,6 +25,7 @@ from .llm_report import generate_report
 from .llm_context import build_llm_context
 from time import perf_counter
 from ..exceptions import LLMContextError,LLMReportError,InferencePipelineError,FinancialRiskPlatformError
+
 
 def analyse_stock(company:str):
     try:

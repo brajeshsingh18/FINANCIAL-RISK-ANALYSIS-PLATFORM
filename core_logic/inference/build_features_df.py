@@ -56,18 +56,33 @@ def build_inference_dataframe(company:str):
         raise DataDownloadError(
         f"Failed to download news data for {ticker}.") from e 
                       
-    try:
-        macro_start_time=(datetime.now()-relativedelta(years=2)).strftime("%Y-%m-%d")
-        macro_dfs={}
-        for indicator_name, series_id in tqdm(indicators.items(),desc="Downloading Macro Data"):
-            macro_dfs[indicator_name]=fetch_macro_data(series_id,macro_start_time)
-    except Exception as e:
-        raise DataDownloadError(
-        f"Failed to download macro data for {ticker}.") from e
+    
+    macro_start_time=(datetime.now()-relativedelta(years=2)).strftime("%Y-%m-%d")
+    macro_dfs={}
+    for indicator_name, series_id in indicators.items():
+        try:
+            print(f"Downloading {indicator_name} ({series_id})")
+            df = fetch_macro_data(series_id, macro_start_time)
+
+            print(
+                f"{indicator_name}: "
+                f"{df['Date'].min()} -> {df['Date'].max()} "
+                f"rows={len(df)}"
+            )
+
+            macro_dfs[indicator_name] = df
+            print("Done")
+        except Exception as e:
+            print(f"Failed on {indicator_name} ({series_id})")
+            raise
     
     ########################### now since we have loaded all the data , we should start preprocessing all the datas one by one lets start with macro data
     try:
+        for name, df in macro_dfs.items():
+            print(f"{name}: {df['Date'].max()} | rows={len(df)}")
         processed_macro_data=merge_all_files(macro_dfs)
+        print(processed_macro_data["Date"].max())
+        print(processed_macro_data.tail())
     except Exception as e:
         raise DataPreprocessingError(
         f"Failed to preprocess macro data for {ticker}.") from e
@@ -90,9 +105,21 @@ def build_inference_dataframe(company:str):
 
     ######################### preprocessing is done now , we have all 3 data frames i think our job is to develop important and required features for model inference purposes
     try:
+        processed_stocks_data = processed_stocks_data.set_index(["Ticker", "Date"])
         stocks_features=build_features(processed_stocks_data)
+        stocks_features = stocks_features.reset_index()
         news_features=feature_engineering_news(processed_news_data)
         macro_features=feature_engineering_macro(processed_macro_data)
+        # macro_feature_columns = [
+        #     c for c in macro_features.columns
+        #     if c != "Date"
+        # ]
+        # joblib.dump(
+        #     macro_feature_columns,
+        #     "models/macro_feature_columns.pkl"
+        # )
+        print("\n========== MACRO FEATURES ==========")
+        print(macro_features.filter(regex="yield|inflation|fed|gdp|consumer|unemployment").tail(1).T)
     except Exception as e:
         raise FeatureEngineeringError(
         "Failed to generate technical indicators.") from e
@@ -100,6 +127,8 @@ def build_inference_dataframe(company:str):
     ####################### after adding these features, our job is to merge all 3 types of data to build single dataframe for which our model will predict output
     final_df=merge_dfs(stocks_features,news_features,macro_features)
     final_df = final_df.ffill()
+    print("\n========== FINAL DF ==========")
+    print(final_df.filter(regex="yield|inflation|fed|gdp|consumer|unemployment").tail(1).T)
     if final_df.empty:
         raise InferenceDataError(
             "Final inference dataframe is empty."
@@ -110,7 +139,8 @@ def build_inference_dataframe(company:str):
     # )
     # final_df=final_df.reindex(columns=feature_columns)
     latest_row=final_df.iloc[[-1]]
-
+    print("\n========== LATEST ROW ==========")
+    print(latest_row.filter(regex="yield|inflation|fed|gdp|consumer|unemployment").T)
 
     return {
         'final_df':final_df,

@@ -21,9 +21,13 @@ def validate_columns(df: pd.DataFrame, file_name: str):
         )
 
 def clean_dataframe(df: pd.DataFrame,ticker: str) -> pd.DataFrame:
+    print("Before cleaning:", df.columns.tolist())
     df["Date"] = pd.to_datetime(df["Date"])
+    print("After datetime:", df.columns.tolist())
     df.sort_values("Date", inplace=True)
-    df.drop_duplicates(subset=["Date"],inplace=True,)
+    print("Before drop_duplicates:", df.columns.tolist())
+
+    df.drop_duplicates(subset=["Date"], inplace=True)
     df.drop_duplicates(inplace=True)
     df.dropna(inplace=True)
     numeric_cols = ["Open","High","Low","Close","Volume",]
@@ -34,6 +38,8 @@ def clean_dataframe(df: pd.DataFrame,ticker: str) -> pd.DataFrame:
     return df
 
 def preprocess_stock_dataframe(df: pd.DataFrame,ticker: str,) -> pd.DataFrame:   # this file is purely created to reuse the preprocessing steps in my inference pipeline it is not needed in training
+    print(df.columns.tolist())
+    print(df.head())
     validate_columns(df, ticker)
     return clean_dataframe(df.copy(), ticker)
 
