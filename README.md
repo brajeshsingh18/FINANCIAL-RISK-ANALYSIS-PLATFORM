@@ -1,66 +1,171 @@
 # 📊 Financial Risk Platform
 
-A Python-based platform for analyzing and predicting financial market risk by combining **technical indicators**, **news sentiment analysis (FinBERT)**, and **machine learning** (scikit-learn, XGBoost, with PyTorch/LSTM ready for future use).
+An end-to-end **financial risk intelligence platform** that combines **technical indicators**, **FinBERT news sentiment**, and **macroeconomic data** with **tree-based ML models** to predict the short-term financial risk and volatility of publicly traded equities. Predictions are explained using **SHAP risk attribution** and rendered into a structured, evidence-grounded **LLM-generated risk report**.
 
 ---
 
-## 🎯 Overview
+## 🎯 What It Does
 
-The platform ingests historical stock data and financial news, engineers technical features, scores news with FinBERT, trains risk models, and produces reports predicting market risk for selected equities.
+Given a company name (e.g. `"Google"`, `"JPMorgan Chase"`, `"NVIDIA"`), the platform:
 
-## 🏗️ Project Structure
+1. Resolves the company to its stock ticker.
+2. Pulls historical price data, recent news, and macroeconomic context.
+3. Engineers technical features, FinBERT sentiment scores, and macro features.
+4. Runs a **classifier** (`high risk` vs `low risk`) and a **volatility regressor**.
+5. Produces **SHAP-based risk attribution** for explainability.
+6. Feeds a structured, grounded context to an **LLM analyst** that writes a professional risk report.
+
+The output is a financial risk profile, not investment advice.
+
+---
+
+## 🏗️ Architecture
+
+```
+                         User query (e.g. "Google")
+                                    │
+                                    ▼
+                        ┌───────────────────────┐
+                        │  Ticker Resolution     │  ← LLM (Groq) + ticker map
+                        └───────────┬───────────┘
+                                    ▼
+       ┌────────────────┬─────────────────┬────────────────┐
+       │                │                 │                │
+       ▼                ▼                 ▼                ▼
+   Stock prices      Financial        Macroeconomic     (cached)
+   (yfinance)        news (RSS/API)   data (FRED)
+       │                │                 │
+       ▼                ▼                 ▼
+   Technical        FinBERT          Macro
+   indicators       sentiment        features
+       │                │                 │
+       └────────────────┴─────────────────┘
+                        │
+                        ▼
+                 Feature engineering
+                        │
+            ┌───────────┴───────────┐
+            ▼                       ▼
+      Classifier               Regressor
+      (High/Low Risk)          (Volatility %)
+            │                       │
+            └───────────┬───────────┘
+                        ▼
+                 SHAP risk attribution
+                        ▼
+              Structured LLM context
+                        ▼
+            LLM-generated risk report
+                  (Groq + LangChain)
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 FINANCIAL RISK PLATFORM/
 │
-├── app.py                       # Main entry point (dashboard / orchestrator)
-├── requirements.txt             # Python dependencies
-├── .gitignore
-├── README.md
+├── frontend/
+│   └── app.py                     # Streamlit/UI entry point
 │
-├── core logic/                  # Pipeline modules
-│   ├── get_data.py              # Fetch stock prices (yfinance) and news
-│   ├── make_features.py         # Technical indicators + feature engineering
-│   ├── sentiment.py             # FinBERT-based news sentiment scoring
-│   ├── train_model.py           # Train ML risk models
-│   ├── predict.py               # Generate predictions
-│   └── create_report.py         # Build reports and visualizations
+├── api/
+│   └── main.py                    # FastAPI service
 │
-├── data/                        # Data storage (gitignored)
-│   ├── stocks/                  # Raw historical price data
-│  NBBN ├── news/                    # Raw and processed news
-│   └── processed/               # Engineered features
+├── core_logic/
+│   ├── exceptions.py              # Custom exception hierarchy
+│   ├── utils/                     # Config, loggers, feature descriptions
+│   │
+│   ├── preprocessing/             # Raw data cleaning
+│   │   ├── clean_stock_data.py
+│   │   ├── clean_news_data.py
+│   │   └── clean_macro_data.py
+│   │
+│   ├── features/                  # Feature engineering
+│   │   ├── stock_features.py          # Technical indicators
+│   │   ├── finbert_sentiment.py       # FinBERT inference
+│   │   ├── generate_sentiment.py
+│   │   ├── news_preperation.py
+│   │   ├── macro_features.py
+│   │   ├── target_engineering.py      # Risk / volatility labels
+│   │   └── final_dataset.py           # Master merge
+│   │
+│   ├── train_models/
+│   │   ├── training_classifier.py
+│   │   └── training_regressor.py
+│   │
+│   └── inference/                 # End-to-end inference pipeline
+│       ├── build_features_df.py       # Live feature construction
+│       ├── predict_classifier.py
+│       ├── predict_regressor.py
+│       ├── predict.py                 # Orchestrator
+│       ├── shap_explaination.py       # SHAP attribution
+│       ├── llm_context.py             # Structured report context
+│       └── llm_report.py              # LLM report generator
 │
-├── models/                      # Saved trained models (gitignored)
-└── reports/                     # Generated outputs (gitignored)
+├── models/                        # Trained artifacts (.pkl)
+├── data/                          # Raw + processed datasets
+├── reports/                       # Generated reports
+├── notebooks/                     # Exploratory work
+│
+├── prompts.py                     # LLM prompts (ticker + analyst)
+├── tickers_map.py                 # Company-name → ticker dictionary
+├── get_llm.py                     # LLM client (Groq)
+├── test_entire_inference_pipeline.py
+├── requirements.txt
+└── README.md
 ```
 
-"CatBoost evaluation was planned but could not be completed due to a package compatibility issue in the development environment. The project compares Logistic Regression, Random Forest, LightGBM, XGBoost, and multiple regression models."HY67 V GB 
+---
 
 ## ⚙️ Tech Stack
 
-| Category | Tools |
+| Layer | Tools |
 |---|---|
-| Data Collection | `yfinance`, `requests` |
+| Data Collection | `yfinance`, `fredapi`, news RSS/API |
 | Data Processing | `pandas`, `numpy` |
-| Technical Indicators | `ta` |
-| Machine Learning | `scikit-learn`, `xgboost` |
-| Deep Learning | `torch` (LSTM / TFT ready) |
-| NLP & Sentiment | `transformers` (FinBERT) |
+| Technical Indicators | `ta`, `pandas-ta` (RSI, MACD, Bollinger, ATR, EMA, ADX, momentum) |
+| Sentiment | `transformers` (FinBERT) |
+| Classical ML | `scikit-learn`, `xgboost`, `lightgbm`, `catboost` |
+| Explainability | `shap` |
+| Deep Learning | `torch` (LSTM-ready) |
+| LLM / Orchestration | `groq`, `langchain`, `langgraph`, `langchain-groq` |
 | Visualization | `matplotlib`, `seaborn` |
-| Model Persistence | `joblib` |
-| Utilities | `scipy`, `tqdm`, `python-dotenv` |
+| Serving | `FastAPI` (api/), Streamlit-style UI (frontend/) |
+| Utilities | `tqdm`, `python-dotenv`, `joblib`, `nltk` |
+
+---
+
+## 🧠 Modeling
+
+The platform trains **two complementary heads** on the same engineered feature set:
+
+| Head | Target | Type | Output |
+|---|---|---|---|
+| Classifier | `high_risk` (0/1) | Gradient-boosted trees | Risk probability + class |
+| Regressor | `future_volatility_20` | Gradient-boosted trees | Predicted volatility (%) |
+
+Models are selected and saved after hyperparameter tuning. The latest training run uses **XGBoost / LightGBM**; CatBoost is supported in `requirements.txt` but disabled in the active environment due to a known package-compat issue (see `classifier_results.csv` / `regression_results.csv` for current metrics).
+
+---
+
+## 🔍 Explainability
+
+- **SHAP** attribution is computed for every prediction. Strongest positive contributors push the model toward *high risk*; strongest negative contributors push toward *low risk*. Each feature is paired with a human-readable description from `core_logic/utils/feature_descriptions.py`.
+- **Structured LLM context** is built from classifier output, regressor output, SHAP, technical indicators, news, and macro data. The LLM (Groq) is constrained by an extensive prompt in `prompts.py` that **forbids fabrication** of news, numbers, or advice and **never modifies supplied predictions**.
+
+---
 
 ## 🚀 Getting Started
 
-### 1. Clone the repository
+### 1. Clone & enter
 
 ```bash
 git clone <your-repo-url>
 cd "FINANCIAL RISK PLATFORM"
 ```
 
-### 2. Create and activate a virtual environment
+### 2. Create a virtual environment
 
 ```bash
 python -m venv myvenv
@@ -76,79 +181,107 @@ source myvenv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Run the pipeline
+### 4. Configure environment
+
+Create a `.env` file in the project root:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+FRED_API_KEY=your_fred_api_key
+```
+
+### 5. (Optional) Retrain the models
 
 ```bash
-# 1. Fetch stock + news data
-python "core logic/get_data.py"
-
-# 2. Engineer features and technical indicators
-python "core logic/make_features.py"
-
-# 3. Score news with FinBERT
-python "core logic/sentiment.py"
-
-# 4. Train the risk model
-python "core logic/train_model.py"
-
-# 5. Generate predictions
-python "core logic/predict.py"
-
-# 6. Build the report
-python "core logic/create_report.py"
+python core_logic/preprocessing/clean_stock_data.py
+python core_logic/preprocessing/clean_news_data.py
+python core_logic/preprocessing/clean_macro_data.py
+python core_logic/features/stock_features.py
+python core_logic/features/finbert_sentiment.py
+python core_logic/features/macro_features.py
+python core_logic/features/target_engineering.py
+python core_logic/features/final_dataset.py
+python core_logic/train_models/training_classifier.py
+python core_logic/train_models/training_regressor.py
 ```
 
-Or launch the full app:
+Pretrained artifacts already live in `models/` and are loaded by the inference pipeline.
+
+### 6. Run inference
+
+**Programmatic smoke test:**
 
 ```bash
-python app.py
+python test_entire_inference_pipeline.py
 ```
 
-## 📈 Pipeline Flow
+**API:**
 
+```bash
+uvicorn api.main:app --reload
 ```
-[Stock Prices] ──┐
-                  ├──> Feature Engineering ──> Model Training ──> Predictions ──> Report
-[Financial News] ─┘            │
-                               └──> FinBERT Sentiment ──┘
+
+**UI:**
+
+```bash
+python frontend/app.py
 ```
+
+Then query with a company name, e.g. `"Google"`, `"JPMorgan"`, `"NVIDIA"`.
+
+---
 
 ## 📊 Features Used
 
-- **Price-based**: Open, High, Low, Close, Volume
-- **Technical Indicators** (via `ta`):
-  - RSI (Relative Strength Index)
-  - MACD (Moving Average Convergence Divergence)
-  - Bollinger Bands
-  - Moving Averages (SMA, EMA)
-  - ATR (Average True Range)
-- **Sentiment**: FinBERT-based scoring of financial news headlines/articles
-- **Volatility**: Rolling standard deviation, returns distribution
+| Category | Examples |
+|---|---|
+| Price-based | Open, High, Low, Close, Volume |
+| Trend | SMA, EMA, MACD, ADX |
+| Momentum | RSI, momentum oscillators |
+| Volatility | Bollinger Bands width, ATR, rolling std |
+| Sentiment | FinBERT positive / negative / neutral scores from news |
+| Macro | CPI, federal funds rate, treasury yields, etc. (FRED) |
 
-## 🤖 Models
+---
 
-- **Baseline**: scikit-learn classifiers / regressors
-- **Primary**: XGBoost
-- **Future**: LSTM / Temporal Fusion Transformer (PyTorch)
+## 📤 Outputs
 
-## 📁 Outputs
+Each inference call returns:
 
-- `models/` — saved trained model artifacts
-- `reports/` — risk score plots, feature importances, prediction summaries
+- Risk class (`low` / `high`) and probability
+- Predicted 20-day volatility (%)
+- Model confidence
+- SHAP feature contributions (with human-readable descriptions)
+- A fully-grounded LLM risk report covering:
+  Executive Summary → Risk Assessment → Technical Analysis → News & Sentiment → Macroeconomic Environment → SHAP Explanation → Historical Analysis → Model Consistency → Limitations → Final Conclusion.
+
+---
+
+## ⚠️ Limitations & Disclaimer
+
+- The platform is for **research and educational purposes only**.
+- It does **not** provide investment, trading, or buy/sell advice.
+- News coverage, macro context, and historical windows are limited by what is currently available through upstream sources.
+- Predictions are probabilistic and can be wrong.
+
+---
 
 ## 🛣️ Roadmap
 
-- [ ] Streamlit/Flask dashboard in `app.py`
-- [ ] LSTM/TFT sequence models for multi-horizon forecasting
+- [ ] Full Streamlit/Flask dashboard wiring
+- [ ] LSTM / Temporal Fusion Transformer sequence models
 - [ ] Real-time news ingestion pipeline
 - [ ] Portfolio-level risk aggregation
-- [ ] Backtesting framework
-- [ ] API for live predictions
+- [ ] Backtesting framework with risk-adjusted metrics
+- [ ] Live API authentication + rate limiting
+- [ ] Expanded ticker map and multi-region coverage
+
+---
 
 ## 📜 License
 
-This project is for educational and research purposes.
+For educational and research use.
 
 ## ✍️ Author
 
-B.Tech Python Project — Financial Risk Analysis Platform
+**B.Tech Python Project — Financial Risk Intelligence Platform.**
