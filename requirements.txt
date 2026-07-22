@@ -28,3 +28,6 @@ langchain-groq
 langgraph
 langchain
 shap
+fastapi
+uvicorn
+pydantic

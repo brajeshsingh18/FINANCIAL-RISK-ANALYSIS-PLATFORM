@@ -22,6 +22,6 @@ def explain_shap(latest_row:pd.DataFrame):
         "Failed to generate SHAP explanation."
         )
     
-    df["abs"] = df["shap_value"].abs()
+    df["abs"] = round(df["shap_value"].abs(),3)
     df = df.sort_values("abs",ascending=False)
     return df.head(10)
