@@ -25,7 +25,6 @@ import pandas as pd
 import yfinance as yf
 from tqdm import tqdm
 
-
 TICKERS = [
     # Technology (10)
     "AAPL",   # Apple
@@ -100,7 +99,6 @@ logger = logging.getLogger(__name__)
 def create_directory() -> None:
     RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-
 def download_stock_data(ticker: str,start_date=START_DATE,end_date:str|None=None) -> pd.DataFrame:
     df = yf.download(
         ticker,
@@ -112,6 +110,8 @@ def download_stock_data(ticker: str,start_date=START_DATE,end_date:str|None=None
     if df.empty:
         raise ValueError(f"No data returned for {ticker}")
     df.reset_index(inplace=True)
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(0)
     return df
 
 

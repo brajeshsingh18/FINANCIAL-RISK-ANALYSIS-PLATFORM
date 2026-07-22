@@ -27,9 +27,7 @@ def classifier_prediction(dictionary):
     df=dictionary['final_df']
     
     X = df[feature_columns].copy()
-    X=X.reindex(columns=feature_columns)
     x=latest_row[feature_columns].copy()
-    x=x.reindex(columns=feature_columns)
     # X = scaler.transform(X) no scaler needed in  lgbm which is our best classifier model 
     try:
         predict_all = clf.predict(X)
