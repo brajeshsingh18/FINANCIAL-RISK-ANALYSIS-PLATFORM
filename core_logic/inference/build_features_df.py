@@ -146,7 +146,8 @@ def build_inference_dataframe(company:str):
         'final_df':final_df,
         'latest_row':latest_row,
         'ticker':ticker,
-        'news':processed_news_data
+        'news':processed_news_data,
+        'stock_history':processed_stocks_data
     }
     
     

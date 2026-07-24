@@ -31,3 +31,9 @@ shap
 fastapi
 uvicorn
 pydantic
+streamlit 
+requests 
+plotly
+streamlit-option-menu 
+streamlit-extras 
+pillow
